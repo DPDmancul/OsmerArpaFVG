@@ -1,0 +1,17 @@
+{
+    "name": "osmerarpafvg.dpd-",
+    "description": "description of OsmerArpaFVG",
+    "architecture": "all",
+    "title": "OsmerArpaFVG",
+    "hooks": {
+        "OsmerArpaFVG": {
+            "apparmor": "OsmerArpaFVG.apparmor",
+            "desktop":  "OsmerArpaFVG.desktop"
+        }
+    },
+    "version": "0.1",
+    "maintainer": "Davide Peressoni <dp.d-@live.it>",
+    "framework" : "ubuntu-sdk-15.04"
+}
+
+
