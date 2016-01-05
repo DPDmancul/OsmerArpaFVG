@@ -7,10 +7,12 @@ Page{id:this_page
     property bool landscape: height<(parent.width-400)
     property variant names: ["situazione","oggi","domani","dopodomani","piu3","piu4"]
     property variant texts:["","","","","",""]
+    property int zona:0
     visible: false
     title: i18n.tr("Previsioni")
     head {
           sections {
+              onSelectedIndexChanged: zona=0
               model: [this.head.sections.selectedIndex==0?"Situazione":"Sit", this.head.sections.selectedIndex==1?"Oggi":"Oggi", this.head.sections.selectedIndex==2?"Domani":"Dom", this.head.sections.selectedIndex==3?"Dopodomani":"Dop",this.head.sections.selectedIndex==4?"3 giorni":"3 g",this.head.sections.selectedIndex==5?"4 giorni":"4 g"]
            }
         }
@@ -65,6 +67,28 @@ Flickable{
         source: Image {
             source: "http://dakation.altervista.org/meteo/server/image_2.php?png="+names[this_page.head.sections.selectedIndex]
         }
+        Item{
+            enabled:this_page.head.sections.selectedIndex>0 && this_page.head.sections.selectedIndex < 4
+            visible:enabled
+            //mappa
+            anchors.fill:imgine
+            z:99
+          MiniMap{leftp :28;topp: 7;zone: 1}
+          MiniMap{leftp :68;topp: 3;zone: 2}
+          MiniMap{leftp :17;topp: 27;zone: 3}
+          MiniMap{leftp :52;topp: 23;zone: 4}
+          MiniMap{leftp :15;topp: 51;zone: 7}
+          MiniMap{leftp :44;topp: 46;zone: 6}
+          MiniMap{leftp :67;topp: 55;zone: 7}
+          MiniMap{leftp :80;topp: 78;zone: 8}
+          MiniMap{leftp :45;topp: 72;zone: 8}
+          MiniMap{leftp :45;topp: 7;zone: 5}//monti
+          MiniMap{leftp :34;topp: 24;zone: 5}//monti
+            MouseArea{
+                anchors.fill: parent
+                onClicked: this_page.zona = 0
+            }
+        }
     }
     Flickable{
         anchors.right:parent.right
@@ -77,7 +101,7 @@ Flickable{
         interactive: landscape
         Text{
             id:mainText
-            text: JSON.parse(texts[this_page.head.sections.selectedIndex]).general
+            text: JSON.parse(texts[this_page.head.sections.selectedIndex])[zona]
             anchors.fill:parent
             wrapMode:Text.Wrap
             horizontalAlignment: Text.AlignJustify
