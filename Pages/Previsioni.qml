@@ -6,27 +6,47 @@ Page{id:this_page
     property color headerColor:cBackground
     property bool landscape: height<(parent.width-400)
     property variant names: ["situazione","oggi","domani","dopodomani","piu3","piu4"]
+    property variant texts:["","","","","",""]
     visible: false
     title: i18n.tr("Previsioni")
     head {
           sections {
-              //è da richiamare quest funzione anche all'avvio
-               onSelectedIndexChanged: setText('http://dakation.altervista.org/meteo/server/previsioni_2.php?q='+names[this.head.sections.selectedIndex]);
-               model: [this.head.sections.selectedIndex==0?"Situazione":"Sit", this.head.sections.selectedIndex==1?"Oggi":"Oggi", this.head.sections.selectedIndex==2?"Domani":"Dom", this.head.sections.selectedIndex==3?"Dopodomani":"Dop",this.head.sections.selectedIndex==4?"3 giorni":"3 g",this.head.sections.selectedIndex==5?"4 giorni":"4 g"]
+              model: [this.head.sections.selectedIndex==0?"Situazione":"Sit", this.head.sections.selectedIndex==1?"Oggi":"Oggi", this.head.sections.selectedIndex==2?"Domani":"Dom", this.head.sections.selectedIndex==3?"Dopodomani":"Dop",this.head.sections.selectedIndex==4?"3 giorni":"3 g",this.head.sections.selectedIndex==5?"4 giorni":"4 g"]
            }
         }
-
-    function setText(url) {
-          var doc = new XMLHttpRequest();
-          doc.onreadystatechange = function() {
-              if (doc.readyState == XMLHttpRequest.DONE) {
-                  mainText.text = JSON.parse(doc.responseText).general;
+    function updateText(url,i,db) {
+              var doc = new XMLHttpRequest()
+              doc.onreadystatechange = function() {
+                  if (doc.readyState === XMLHttpRequest.DONE){
+                      texts[i] = doc.responseText
+                      db.transaction(
+                          function(tx) {
+                              tx.executeSql('UPDATE Previsioni SET `'+names[i]+'`=?', [ texts[i] ])
+                          }
+                      )
+                  }
               }
+              doc.open("get", url)
+              doc.setRequestHeader("Content-Encoding", "UTF-8")
+              doc.send()
           }
-          doc.open("get", url);
-          doc.setRequestHeader("Content-Encoding", "UTF-8");
-          doc.send();
-      }
+    function updateAllTexts(db) {
+        for (var x in names)
+            updateText('http://dakation.altervista.org/meteo/server/previsioni_2.php?q='+names[x],x,db)
+    }
+    function load(db) {
+              db.transaction(
+                  function(tx) {
+                      var rs = tx.executeSql('SELECT * FROM Previsioni WHERE id=1')
+                      texts[0] = rs.rows.item(0).situazione
+                      texts[1] = rs.rows.item(0).oggi
+                      texts[2] = rs.rows.item(0).domani
+                      texts[3] = rs.rows.item(0).dopodomani
+                      texts[4] = rs.rows.item(0).piu3
+                      texts[5] = rs.rows.item(0).piu4
+                  }
+              )
+          }
 
 Flickable{
     anchors.fill:parent
@@ -57,7 +77,7 @@ Flickable{
         interactive: landscape
         Text{
             id:mainText
-            text: "Loading..."
+            text: JSON.parse(texts[this_page.head.sections.selectedIndex]).general
             anchors.fill:parent
             wrapMode:Text.Wrap
             horizontalAlignment: Text.AlignJustify

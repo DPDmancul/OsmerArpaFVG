@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 3.5.0, 2016-01-04T18:20:05. -->
+<!-- Written by QtCreator 3.5.0, 2016-01-05T14:23:40. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -147,9 +147,7 @@
      <value type="int">13</value>
      <value type="int">14</value>
     </valuelist>
-    <valuelist type="QVariantList" key="Autopilot.AutopilotRunConfiguration.SelectedTests">
-     <value type="QString">OsmerArpaFVG.tests.test_main.MainViewTestCase</value>
-    </valuelist>
+    <valuelist type="QVariantList" key="Autopilot.AutopilotRunConfiguration.SelectedTests"/>
     <value type="int" key="PE.EnvironmentAspect.Base">2</value>
     <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Autopilot Testsuite OsmerArpaFVG</value>
