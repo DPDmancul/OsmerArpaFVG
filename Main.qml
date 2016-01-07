@@ -89,6 +89,7 @@ MainView {
                       id: rootTabs
                       anchors.fill: parent
                 Previsioni{id:previsioni}
+                Info{id:info}
             }
 
     }
