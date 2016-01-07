@@ -10,6 +10,7 @@ Tab {
     property variant names: ["situazione","oggi","domani","dopodomani","piu3","piu4"]
     property variant texts:["","","","","",""]
     property int zona:0
+    property bool ready:false
     head {
           sections {
               onSelectedIndexChanged: zona=0
@@ -33,10 +34,12 @@ Tab {
               doc.send()
           }
     function updateAllTexts(db) {
+        this_page.ready=false
         for (var x in names)
             updateText('http://dakation.altervista.org/meteo/server/previsioni_2.php?q='+names[x],x,db)
     }
     function load(db) {
+        this_page.ready=false
               db.transaction(
                   function(tx) {
                       var rs = tx.executeSql('SELECT * FROM Previsioni WHERE id=1')
@@ -49,7 +52,7 @@ Tab {
                   }
               )
 
-        //%to-add%/QUI è da inserie un codice che ricarichi il testo del Text in previsioni
+        ready=true//%to-add%/QUI è da inserie un codice che ricarichi il testo del Text in previsioni
           }
 
 Flickable{
@@ -103,7 +106,7 @@ Flickable{
         interactive: this_page.landscape
         Text{
             id:mainText
-            text: JSON.parse(this_page.texts[this_page.head.sections.selectedIndex])[this_page.zona]
+            text: this_page.ready?JSON.parse(this_page.texts[this_page.head.sections.selectedIndex])[this_page.zona]:'Aggiornamento in corso...'
             anchors.fill:parent
             wrapMode:Text.Wrap
             horizontalAlignment: Text.AlignJustify
