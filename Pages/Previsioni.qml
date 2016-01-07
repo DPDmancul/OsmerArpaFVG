@@ -1,15 +1,15 @@
 import QtQuick 2.0
 import Ubuntu.Components 1.2
 
-Page{id:this_page
+Tab {
+                title: 'Previsioni'
+                page: Page{id:this_page
     property color cBackground:"#EDEDED"//Theme.palette.normal.background
     property color headerColor:cBackground
     property bool landscape: height<(parent.width-400)
     property variant names: ["situazione","oggi","domani","dopodomani","piu3","piu4"]
     property variant texts:["","","","","",""]
     property int zona:0
-    visible: false
-    title: i18n.tr("Previsioni")
     head {
           sections {
               onSelectedIndexChanged: zona=0
@@ -53,19 +53,19 @@ Page{id:this_page
 Flickable{
     anchors.fill:parent
     contentWidth:parent.width
-    contentHeight: landscape?parent.height-90:imgine.height+mainText.paintedHeight+30 //90 è la misura dell'header
+    contentHeight: this_page.landscape?parent.height-90:imgine.height+mainText.paintedHeight+30 //90 è la misura dell'header
     flickableDirection:Flickable.VerticalFlick
-    interactive : !landscape
+    interactive : !this_page.landscape
     UbuntuShape {
         id:imgine
-        backgroundColor:cBackground
+        backgroundColor:this_page.cBackground
         anchors.top:parent.top
         anchors.left:parent.left
-        height: (landscape?parent.height:parent.width)-10
+        height: (this_page.landscape?parent.height:parent.width)-10
         width:height
         anchors.margins:5
         source: Image {
-            source: "http://dakation.altervista.org/meteo/server/image_2.php?png="+names[this_page.head.sections.selectedIndex]
+            source: "http://dakation.altervista.org/meteo/server/image_2.php?png="+this_page.names[this_page.head.sections.selectedIndex]
         }
         Item{
             enabled:this_page.head.sections.selectedIndex>0 && this_page.head.sections.selectedIndex < 4
@@ -92,16 +92,16 @@ Flickable{
     }
     Flickable{
         anchors.right:parent.right
-        anchors.left:landscape?imgine.right:parent.left
-        anchors.top:landscape?parent.top:imgine.bottom
+        anchors.left:this_page.landscape?imgine.right:parent.left
+        anchors.top:this_page.landscape?parent.top:imgine.bottom
         anchors.bottom:parent.bottom
         contentHeight: mainText.paintedHeight
         //height:landscape?parent.height:paintedHeight
         flickableDirection:Flickable.VerticalFlick
-        interactive: landscape
+        interactive: this_page.landscape
         Text{
             id:mainText
-            text: JSON.parse(texts[this_page.head.sections.selectedIndex])[zona]
+            text: JSON.parse(this_page.texts[this_page.head.sections.selectedIndex])[this_page.zona]
             anchors.fill:parent
             wrapMode:Text.Wrap
             horizontalAlignment: Text.AlignJustify
@@ -109,4 +109,5 @@ Flickable{
         }
       }
    }
+}
 }

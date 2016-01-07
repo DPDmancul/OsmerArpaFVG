@@ -21,7 +21,7 @@ MainView {
 
 
     function load (db){
-        previsioni.load(db)
+        previsioni.page.load(db)
     }
 
     function settime(db){
@@ -33,7 +33,7 @@ MainView {
     }
 
     function upDate (db){
-        previsioni.updateAllTexts(db)
+        previsioni.page.updateAllTexts(db)
         load(db)
         console.log('Aggiornamento dati...')
         settime(db)
@@ -72,8 +72,8 @@ MainView {
 
     automaticOrientation: true
 
-    backgroundColor: pageStack.currentPage.cBackground
-    headerColor: (pageStack.currentPage==previsioni?previsioni.headerColor:backgroundColor)
+    backgroundColor: pageStack.currentPage.currentPage.cBackground
+    headerColor: (pageStack.currentPage.currentPage.parent===previsioni?previsioni.page.headerColor:backgroundColor)
 
     // Removes the old toolbar and enables new features of the new header.
     useDeprecatedToolbar: false
@@ -81,12 +81,17 @@ MainView {
     width: units.gu(150)
     height: units.gu(75)
 
-    PageStack {
+   PageStack {
             id: pageStack
-            Component.onCompleted: push(previsioni)
-
-            Previsioni{id:previsioni}
+            Component.onCompleted: push(rootTabs)            
+            anchors.fill: parent
+            Tabs {
+                      id: rootTabs
+                      anchors.fill: parent
+                Previsioni{id:previsioni}
+            }
 
     }
+
 }
 
