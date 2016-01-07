@@ -22,6 +22,7 @@ MainView {
 
     function load (db){
         previsioni.page.load(db)
+        info.load_time(db)
     }
 
     function settime(db){
@@ -46,8 +47,8 @@ MainView {
                             tx.executeSql('INSERT INTO Previsioni VALUES (1,\'situazione\', \'oggi\', \'domani\' , \'dopodomani\' , \'piu3\' , \'piu4\')');
                             tx.executeSql('CREATE TABLE IF NOT EXISTS Img_previsioni(id TINYINT UNSIGNED,situazione BLOB, oggi BLOB, domani BLOB, dopodomani BLOB, piu3 BLOB, piu4 BLOB)');
                             tx.executeSql('INSERT INTO Img_previsioni VALUES (1,\'situazione\', \'oggi\', \'domani\' , \'dopodomani\' , \'piu3\' , \'piu4\')');
-                            tx.executeSql('CREATE TABLE IF NOT EXISTS lastUp(id TINYINT UNSIGNED,last DATETIME)');
-                            tx.executeSql('INSERT INTO LastUp VALUES (1,CURRENT_TIMESTAMP)');
+                            tx.executeSql('CREATE TABLE IF NOT EXISTS lastUp(id TINYINT UNSIGNED,last DATETIME,every INT UNSIGNED)');
+                            tx.executeSql('INSERT INTO LastUp VALUES (1,CURRENT_TIMESTAMP,120)');
                         }
                     )
         upDate(db)

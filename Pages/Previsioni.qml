@@ -48,6 +48,8 @@ Tab {
                       texts[5] = rs.rows.item(0).piu4
                   }
               )
+
+        //%to-add%/QUI è da inserie un codice che ricarichi il testo del Text in previsioni
           }
 
 Flickable{
