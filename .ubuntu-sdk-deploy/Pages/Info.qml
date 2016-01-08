@@ -28,7 +28,7 @@ page: Page{id:this_page
             anchors.top:parent.top
             wrapMode:Text.Wrap
             horizontalAlignment: Text.AlignHCenter
-            text: '<h3>Versione 2.0.1</h3>
+            text: '<h3>Versione 2.0.0</h3>
                     <h1>Sviluppato da <a target="_blank" href="http://dakation.altervista.org/">DPD-</a>
                     <br>Rilasciato sottolicenza GNU/GPL2: <a target="_blank" href="https://github.com/DPDmancul/OsmerArpaFVG">Sorgente</a></h1>
                     <h2>Previsione a cura dell\' <a target="_blank" href="http://www.meteo.fvg.it/">OSMER Arpa F.V.G.</a></h2>'

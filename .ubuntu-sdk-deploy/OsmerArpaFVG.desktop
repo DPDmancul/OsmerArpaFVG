@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=OsmerArpaFVG
+Exec=qmlscene $@ Main.qml
+Icon=OsmerArpaFVG.png
+Terminal=false
+Type=Application
+X-Ubuntu-Touch=true
+
