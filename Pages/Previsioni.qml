@@ -11,14 +11,18 @@ Tab {
     property variant texts:["","","","","",""]
     property variant images:["","","","","",""]
     property int zona:0
-    property bool ready:false
+    property bool readytext:false
+    property bool readyimg:false
     head {
           sections {
               onSelectedIndexChanged: zona=0
               model: [this.head.sections.selectedIndex==0?"Situazione":"Sit", this.head.sections.selectedIndex==1?"Oggi":"Oggi", this.head.sections.selectedIndex==2?"Domani":"Dom", this.head.sections.selectedIndex==3?"Dopodomani":"Dop",this.head.sections.selectedIndex==4?"3 giorni":"3 g",this.head.sections.selectedIndex==5?"4 giorni":"4 g"]
            }
         }
+
+
     function updateText(url,i,db) {
+        this_page.readytext=false
               var doc = new XMLHttpRequest()
               doc.onreadystatechange = function() {
                   if (doc.readyState === XMLHttpRequest.DONE){
@@ -35,6 +39,7 @@ Tab {
               doc.send()
           }
     function updateImage(url,i,db) {
+        this_page.readyimg=false
               var doc = new XMLHttpRequest()
               doc.onreadystatechange = function() {
                   if (doc.readyState === XMLHttpRequest.DONE){
@@ -51,14 +56,16 @@ Tab {
               doc.send()
           }
     function updateAllTexts(db) {
-        this_page.ready=false
+        this_page.readytext=false
+        this_page.readyimg=false
         for (var x in names){
             updateText('http://dakation.altervista.org/meteo/server/previsioni_2.php?q='+names[x],x,db)
             updateImage('http://dakation.altervista.org/meteo/server/image_2_b64.php?png='+names[x],x,db)
         }
     }
     function load(db) {
-        this_page.ready=false
+        this_page.readytext=false
+        this_page.readyimg=false
               db.transaction(
                   function(tx) {
                       var rs = tx.executeSql('SELECT * FROM Previsioni WHERE id=1')
@@ -68,6 +75,7 @@ Tab {
                       texts[3] = rs.rows.item(0).dopodomani
                       texts[4] = rs.rows.item(0).piu3
                       texts[5] = rs.rows.item(0).piu4
+                      readytext=true
                   }
               )
         db.transaction(
@@ -79,7 +87,7 @@ Tab {
                 images[3] = rs.rows.item(0).dopodomani
                 images[4] = rs.rows.item(0).piu3
                 images[5] = rs.rows.item(0).piu4
-                ready=true
+                readyimg=true
             }
         )
           }
@@ -99,7 +107,7 @@ Flickable{
         width:height
         anchors.margins:5
         source: Image {
-            source: this_page.ready?this_page.images[this_page.head.sections.selectedIndex]:'loading.png'
+            source: this_page.readyimg?this_page.images[this_page.head.sections.selectedIndex]:'loading.png'
         }
         Item{
             enabled:this_page.head.sections.selectedIndex>0 && this_page.head.sections.selectedIndex < 4
@@ -134,7 +142,7 @@ Flickable{
         interactive: this_page.landscape
         Text{
             id:mainText
-            text: this_page.ready?JSON.parse(this_page.texts[this_page.head.sections.selectedIndex])[this_page.zona]:'Aggiornamento in corso...'
+            text: this_page.readytext?JSON.parse(this_page.texts[this_page.head.sections.selectedIndex])[this_page.zona]:'Aggiornamento in corso...'
             anchors.fill:parent
             wrapMode:Text.Wrap
             horizontalAlignment: Text.AlignJustify
