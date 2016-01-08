@@ -97,6 +97,7 @@ MainView {
                       id: rootTabs
                       anchors.fill: parent
                 Previsioni{id:previsioni}
+                Webcam{id:webcam}
                 Info{id:info}
             }
 
