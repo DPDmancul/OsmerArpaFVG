@@ -9,7 +9,7 @@
             "desktop": "OsmerArpaFVG.desktop"
         }
     },
-    "version": "2.0.1",
+    "version": "2.0.2",
     "maintainer": "Davide Peressoni <dp.d-@live.it>",
     "framework": "ubuntu-sdk-15.04"
 }

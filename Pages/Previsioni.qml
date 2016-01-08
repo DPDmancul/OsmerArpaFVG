@@ -9,6 +9,7 @@ Tab {
     property bool landscape: height<(parent.width-400)
     property variant names: ["situazione","oggi","domani","dopodomani","piu3","piu4"]
     property variant texts:["","","","","",""]
+    property variant images:["","","","","",""]
     property int zona:0
     property bool ready:false
     head {
@@ -33,10 +34,28 @@ Tab {
               doc.setRequestHeader("Content-Encoding", "UTF-8")
               doc.send()
           }
+    function updateImage(url,i,db) {
+              var doc = new XMLHttpRequest()
+              doc.onreadystatechange = function() {
+                  if (doc.readyState === XMLHttpRequest.DONE){
+                      images[i] = doc.responseText
+                      db.transaction(
+                          function(tx) {
+                              tx.executeSql('UPDATE Img_previsioni SET `'+names[i]+'`=?', [ images[i] ])
+                          }
+                      )
+                  }
+              }
+              doc.open("get", url)
+              doc.setRequestHeader("Content-Encoding", "UTF-8")
+              doc.send()
+          }
     function updateAllTexts(db) {
         this_page.ready=false
-        for (var x in names)
+        for (var x in names){
             updateText('http://dakation.altervista.org/meteo/server/previsioni_2.php?q='+names[x],x,db)
+            updateImage('http://dakation.altervista.org/meteo/server/image_2_b64.php?png='+names[x],x,db)
+        }
     }
     function load(db) {
         this_page.ready=false
@@ -51,8 +70,18 @@ Tab {
                       texts[5] = rs.rows.item(0).piu4
                   }
               )
-
-        ready=true//%to-add%/QUI è da inserie un codice che ricarichi il testo del Text in previsioni
+        db.transaction(
+            function(tx) {
+                var rs = tx.executeSql('SELECT * FROM Img_previsioni WHERE id=1')
+                images[0] = rs.rows.item(0).situazione
+                images[1] = rs.rows.item(0).oggi
+                images[2] = rs.rows.item(0).domani
+                images[3] = rs.rows.item(0).dopodomani
+                images[4] = rs.rows.item(0).piu3
+                images[5] = rs.rows.item(0).piu4
+                ready=true
+            }
+        )
           }
 
 Flickable{
@@ -66,11 +95,11 @@ Flickable{
         backgroundColor:this_page.cBackground
         anchors.top:parent.top
         anchors.left:parent.left
-        height: (this_page.landscape?parent.height:parent.width)-10
+        height:(this_page.landscape?parent.height:parent.width)-10
         width:height
         anchors.margins:5
         source: Image {
-            source: "http://dakation.altervista.org/meteo/server/image_2.php?png="+this_page.names[this_page.head.sections.selectedIndex]
+            source: this_page.ready?this_page.images[this_page.head.sections.selectedIndex]:'loading.png'
         }
         Item{
             enabled:this_page.head.sections.selectedIndex>0 && this_page.head.sections.selectedIndex < 4
@@ -101,7 +130,6 @@ Flickable{
         anchors.top:this_page.landscape?parent.top:imgine.bottom
         anchors.bottom:parent.bottom
         contentHeight: mainText.paintedHeight
-        //height:landscape?parent.height:paintedHeight
         flickableDirection:Flickable.VerticalFlick
         interactive: this_page.landscape
         Text{

@@ -9,6 +9,7 @@ Tab {
     property bool landscape: height<(parent.width-400)
     property variant names: ["situazione","oggi","domani","dopodomani","piu3","piu4"]
     property variant texts:["","","","","",""]
+    property variant images:["","","","","",""]
     property int zona:0
     property bool ready:false
     head {
@@ -33,10 +34,28 @@ Tab {
               doc.setRequestHeader("Content-Encoding", "UTF-8")
               doc.send()
           }
+    function updateImage(url,i,db) {
+              var doc = new XMLHttpRequest()
+              doc.onreadystatechange = function() {
+                  if (doc.readyState === XMLHttpRequest.DONE){
+                      images[i] = doc.responseText
+                      db.transaction(
+                          function(tx) {
+                              tx.executeSql('UPDATE Img_previsioni SET `'+names[i]+'`=?', [ images[i] ])
+                          }
+                      )
+                  }
+              }
+              doc.open("get", url)
+              doc.setRequestHeader("Content-Encoding", "UTF-8")
+              doc.send()
+          }
     function updateAllTexts(db) {
         this_page.ready=false
-        for (var x in names)
+        for (var x in names){
             updateText('http://dakation.altervista.org/meteo/server/previsioni_2.php?q='+names[x],x,db)
+            updateImage('http://dakation.altervista.org/meteo/server/image_2_b64.php?png='+names[x],x,db)
+        }
     }
     function load(db) {
         this_page.ready=false
@@ -70,7 +89,7 @@ Flickable{
         width:height
         anchors.margins:5
         source: Image {
-            source: "http://dakation.altervista.org/meteo/server/image_2.php?png="+this_page.names[this_page.head.sections.selectedIndex]
+            source: this_page.images[this_page.head.sections.selectedIndex]
         }
         Item{
             enabled:this_page.head.sections.selectedIndex>0 && this_page.head.sections.selectedIndex < 4

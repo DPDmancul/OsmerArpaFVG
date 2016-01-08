@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=OsmerArpaFVG
-Exec=qmlscene $@ Main.qml
+Exec=./qtc_device_debughelper.py app "qmlscene $@ Main.qml"
 Icon=OsmerArpaFVG.png
 Terminal=false
 Type=Application
