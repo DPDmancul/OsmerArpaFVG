@@ -1,8 +1,9 @@
 {
     "policy_groups": [
         "networking",
-        "webview",
-        "debug"
+        "webview"
     ],
     "policy_version": 1.3
 }
+
+

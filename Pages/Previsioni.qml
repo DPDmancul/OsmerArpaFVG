@@ -7,9 +7,9 @@ Tab {
     property color cBackground:"#EDEDED"//Theme.palette.normal.background
     property color headerColor:cBackground
     property bool landscape: height<(parent.width-400)
-    property variant names: ["situazione","oggi","domani","dopodomani","piu3","piu4"]
+    property variant names: ["situazione","oggi","domani","dopodomani","piu3","piu4","radar"]
     property variant texts:["","","","","",""]
-    property variant images:["","","","","",""]
+    property variant images:["","","","","","",""]
     property int zona:0
     property bool readytext:false
     property bool readyimg:false
@@ -58,6 +58,7 @@ Tab {
     function updateAllTexts(db) {
         this_page.readytext=false
         this_page.readyimg=false
+        updateImage('http://dakation.altervista.org/meteo/server/image_2_b64.php?png=radar',6,db)
         for (var x in names){
             updateText('http://dakation.altervista.org/meteo/server/previsioni_2.php?q='+names[x],x,db)
             updateImage('http://dakation.altervista.org/meteo/server/image_2_b64.php?png='+names[x],x,db)
@@ -87,6 +88,7 @@ Tab {
                 images[3] = rs.rows.item(0).dopodomani
                 images[4] = rs.rows.item(0).piu3
                 images[5] = rs.rows.item(0).piu4
+                images[6] = rs.rows.item(0).radar
                 readyimg=true
             }
         )

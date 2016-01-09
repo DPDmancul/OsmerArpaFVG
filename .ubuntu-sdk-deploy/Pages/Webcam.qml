@@ -64,12 +64,6 @@ page: Page{id:this_page
         name: 'Pordenone'
         url: 'http://webcam.comune.pordenone.it/pordenone.jpg'
         }ListElement {
-            name: 'Premariacco'
-            url: 'title'
-         }ListElement {
-            name: 'Fly & Joy San Mauro'
-            url: 'http://www.flyejoy.it/webcam/webcam.jpg'
-        }ListElement {
         name: 'Ravascletto/Zoncolan'
         url: 'title'
         }ListElement {

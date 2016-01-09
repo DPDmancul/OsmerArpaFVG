@@ -61,7 +61,7 @@ page: Page{id:this_page
 
      Button{text:'Imposta';id:btn_save
              enabled:minut.acceptableInput
-             color:enabled?'green':'gray'
+             color:enabled?UbuntuColors.green:UbuntuColors.coolGrey
              onClicked: mainview.db.transaction(
                     function(tx) {
                         tx.executeSql('UPDATE LastUp SET every=? WHERE id=1' , [ minut.text ])
@@ -73,7 +73,7 @@ page: Page{id:this_page
                 id:update_btn
                 anchors.leftMargin:10
                 text:'Aggiorna ora'
-                color:'blue'
+                color:UbuntuColors.blue
                 onClicked: mainview.upDate(mainview.db)}
        }
         Image{

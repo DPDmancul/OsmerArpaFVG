@@ -33,6 +33,7 @@ MainView {
         )
     }
 
+
     function upDate (db){
         previsioni.page.updateAllTexts(db)
         load(db)
@@ -55,7 +56,13 @@ MainView {
         db.changeVersion("", "2.0.0");
     }
 
-    function checktime(db){
+    function checktime(db){        
+        db.transaction(
+            function(tx) {
+                var rs=tx.executeSql('SELECT * FROM LastUp WHERE id=1');
+                updateTimer.minutes=rs.rows[0].every
+            }
+        )
         db.transaction(
             function(tx) {
                 var rs=tx.executeSql('SELECT * FROM LastUp WHERE (strftime(\'%s\',\'now\') - strftime(\'%s\',last)) >= ?', [updateTimer.interval/1000]);
@@ -90,6 +97,7 @@ MainView {
                       id: rootTabs
                       anchors.fill: parent
                 Previsioni{id:previsioni}
+                Webcam{id:webcam}
                 Info{id:info}
             }
 
