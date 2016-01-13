@@ -16,6 +16,7 @@ Rectangle{
     MouseArea{
         anchors.fill: parent
         onClicked: {this_page.zona = parent.zone
+            this_page._load_zone(this_page.head.sections.selectedIndex)
             mouse.accepted = true}
     }
 }

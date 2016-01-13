@@ -11,18 +11,36 @@ Tab {
     property variant texts:["","","","","",""]
     property variant images:["","","","","","",""]
     property int zona:0
-    property bool readytext:false
-    property bool readyimg:false
     head {
           sections {
-              onSelectedIndexChanged: zona=0
+              onSelectedIndexChanged: _load(this_page.head.sections.selectedIndex)
               model: [this.head.sections.selectedIndex==0?"Situazione":"Sit", this.head.sections.selectedIndex==1?"Oggi":"Oggi", this.head.sections.selectedIndex==2?"Domani":"Dom", this.head.sections.selectedIndex==3?"Dopodomani":"Dop",this.head.sections.selectedIndex==4?"3 giorni":"3 g",this.head.sections.selectedIndex==5?"4 giorni":"4 g"]
            }
         }
 
 
+    function _reset(){
+        mainText.text='Aggiornamento in corso...'
+        radar.page.imageuri=cartina.source='loading.png'
+    }
+    function _load_zone(idx){
+        try{
+            mainText.text=JSON.parse(texts[idx])[zona]
+           }catch(err) {
+            console.log('_load_zone',err.message);
+        }
+    }
+    function _load(idx){
+        zona=0
+        _load_zone(idx)
+        cartina.source=images[idx]
+    }
+    function _load_all(){
+       _load(this_page.head.sections.selectedIndex)
+      radar.page.imageuri=images[6]
+    }
+
     function updateText(url,i,db) {
-        this_page.readytext=false
               var doc = new XMLHttpRequest()
               doc.onreadystatechange = function() {
                   if (doc.readyState === XMLHttpRequest.DONE){
@@ -30,6 +48,8 @@ Tab {
                       db.transaction(
                           function(tx) {
                               tx.executeSql('UPDATE Previsioni SET `'+names[i]+'`=?', [ texts[i] ])
+                              if(i===5)
+                                  _load_all()
                           }
                       )
                   }
@@ -39,7 +59,6 @@ Tab {
               doc.send()
           }
     function updateImage(url,i,db) {
-        this_page.readyimg=false
               var doc = new XMLHttpRequest()
               doc.onreadystatechange = function() {
                   if (doc.readyState === XMLHttpRequest.DONE){
@@ -47,6 +66,8 @@ Tab {
                       db.transaction(
                           function(tx) {
                               tx.executeSql('UPDATE Img_previsioni SET `'+names[i]+'`=?', [ images[i] ])
+                              if(i===5)
+                                _load_all()
                           }
                       )
                   }
@@ -56,17 +77,15 @@ Tab {
               doc.send()
           }
     function updateAllTexts(db) {
-        this_page.readytext=false
-        this_page.readyimg=false
+        _reset()
         updateImage('http://dakation.altervista.org/meteo/server/image_2_b64.php?png=radar',6,db)
-        for (var x in names){
+        for (var x=0;x<6;x++){
             updateText('http://dakation.altervista.org/meteo/server/previsioni_2.php?q='+names[x],x,db)
             updateImage('http://dakation.altervista.org/meteo/server/image_2_b64.php?png='+names[x],x,db)
         }
     }
     function load(db) {
-        this_page.readytext=false
-        this_page.readyimg=false
+        _reset()
               db.transaction(
                   function(tx) {
                       var rs = tx.executeSql('SELECT * FROM Previsioni WHERE id=1')
@@ -76,7 +95,6 @@ Tab {
                       texts[3] = rs.rows.item(0).dopodomani
                       texts[4] = rs.rows.item(0).piu3
                       texts[5] = rs.rows.item(0).piu4
-                      readytext=true
                   }
               )
         db.transaction(
@@ -89,9 +107,9 @@ Tab {
                 images[4] = rs.rows.item(0).piu3
                 images[5] = rs.rows.item(0).piu4
                 images[6] = rs.rows.item(0).radar
-                readyimg=true
             }
         )
+        _load_all()
           }
 
 Flickable{
@@ -109,7 +127,8 @@ Flickable{
         width:height
         anchors.margins:5
         source: Image {
-            source: this_page.readyimg?this_page.images[this_page.head.sections.selectedIndex]:'loading.png'
+            id:cartina
+            source: 'loading.png'
         }
         Item{
             enabled:this_page.head.sections.selectedIndex>0 && this_page.head.sections.selectedIndex < 4
@@ -130,7 +149,8 @@ Flickable{
           MiniMap{leftp :34;topp: 24;zone: 5}//monti
             MouseArea{
                 anchors.fill: parent
-                onClicked: this_page.zona = 0
+                onClicked: {this_page.zona = 0
+                this_page._load_zone(this_page.head.sections.selectedIndex)}
             }
         }
     }
@@ -144,7 +164,7 @@ Flickable{
         interactive: this_page.landscape
         Text{
             id:mainText
-            text: this_page.readytext?JSON.parse(this_page.texts[this_page.head.sections.selectedIndex])[this_page.zona]:'Aggiornamento in corso...'
+            text: 'Caricamento in corso...'
             anchors.fill:parent
             wrapMode:Text.Wrap
             horizontalAlignment: Text.AlignJustify

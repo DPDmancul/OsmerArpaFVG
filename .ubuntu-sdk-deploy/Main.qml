@@ -46,14 +46,14 @@ MainView {
                         function(tx) {
                             tx.executeSql('CREATE TABLE IF NOT EXISTS Previsioni(id TINYINT UNSIGNED,situazione TEXT, oggi TEXT, domani TEXT, dopodomani TEXT, piu3 TEXT, piu4 TEXT)');
                             tx.executeSql('INSERT INTO Previsioni VALUES (1,\'situazione\', \'oggi\', \'domani\' , \'dopodomani\' , \'piu3\' , \'piu4\')');
-                            tx.executeSql('CREATE TABLE IF NOT EXISTS Img_previsioni(id TINYINT UNSIGNED,situazione BLOB, oggi BLOB, domani BLOB, dopodomani BLOB, piu3 BLOB, piu4 BLOB)');
-                            tx.executeSql('INSERT INTO Img_previsioni VALUES (1,\'situazione\', \'oggi\', \'domani\' , \'dopodomani\' , \'piu3\' , \'piu4\')');
+                            tx.executeSql('CREATE TABLE IF NOT EXISTS Img_previsioni(id TINYINT UNSIGNED,situazione BLOB, oggi BLOB, domani BLOB, dopodomani BLOB, piu3 BLOB, piu4 BLOB, radar BLOB)');
+                            tx.executeSql('INSERT INTO Img_previsioni VALUES (1,\'situazione\', \'oggi\', \'domani\' , \'dopodomani\' , \'piu3\' , \'piu4\', \'radar\')');
                             tx.executeSql('CREATE TABLE IF NOT EXISTS lastUp(id TINYINT UNSIGNED,last DATETIME,every INT UNSIGNED)');
                             tx.executeSql('INSERT INTO LastUp VALUES (1,CURRENT_TIMESTAMP,120)');
                         }
                     )
         upDate(db)
-        db.changeVersion("", "2.0.0");
+        db.changeVersion("", "2.0.3");
     }
 
     function checktime(db){        
@@ -72,8 +72,9 @@ MainView {
         )
     }
 
+
     Component.onCompleted: {
-         db = LocalStorage.openDatabaseSync("OsmerArpaFVG_v2", "2.0.0", "meteo data for Osmer Arpa FVG app", 1000000, firsttime)
+        db = LocalStorage.openDatabaseSync("OsmerArpaFVG_v2.0.3", "2.0.3", "meteo data for Osmer Arpa FVG app", 3000000, firsttime)
          checktime(db)
          load(db)
     }
@@ -97,6 +98,7 @@ MainView {
                       id: rootTabs
                       anchors.fill: parent
                 Previsioni{id:previsioni}
+                Radar{id:radar}
                 Webcam{id:webcam}
                 Info{id:info}
             }
